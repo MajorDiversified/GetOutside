@@ -1,7 +1,11 @@
 package com.majordiversifed.getoutside;
 
+import android.app.ProgressDialog;
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,11 +19,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.esri.android.geotrigger.GeotriggerService;
+
 import com.esri.android.map.GraphicsLayer;
+import com.esri.android.map.LocationDisplayManager;
 import com.esri.android.map.MapOptions;
 import com.esri.android.map.MapView;
+import com.esri.android.map.ags.ArcGISDynamicMapServiceLayer;
 import com.esri.android.map.ags.ArcGISFeatureLayer;
+import com.esri.android.map.event.OnStatusChangedListener;
+import com.esri.core.geometry.Envelope;
+import com.esri.core.geometry.Point;
+import com.esri.core.io.UserCredentials;
+import com.esri.core.map.Feature;
+import com.esri.core.map.FeatureResult;
+import com.esri.core.map.Graphic;
+import com.esri.core.symbol.SimpleMarkerSymbol;
+import com.esri.core.tasks.query.QueryTask;
+import com.esri.core.tasks.query.QueryParameters;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -36,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     MenuItem mGrayMenuItem = null;
     MenuItem mOceansMenuItem = null;
 
+
     // Create MapOptions for each type of basemap.
     final MapOptions mTopoBasemap = new MapOptions(MapOptions.MapType.TOPO);
     final MapOptions mStreetsBasemap = new MapOptions(MapOptions.MapType.STREETS);
@@ -50,23 +68,28 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                LocationDisplayManager locationDisplayManager = mMapView.getLocationDisplayManager();
+                locationDisplayManager.setAutoPanMode(LocationDisplayManager.AutoPanMode.LOCATION);
+                locationDisplayManager.start();
+                mMapView.zoomToScale(locationDisplayManager.getPoint(), 24000);
             }
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -74,25 +97,46 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-// Retrieve the map and initial extent from XML layout
+        UserCredentials creds = new UserCredentials();
+        creds.setUserAccount("get_Outside", "mhacks2016");
+        // The following line can be omitted if the default token service is used.
+        creds.setTokenServiceUrl("http://hostname/ArcGIS/tokens");
+       // ArcGISDynamicMapServiceLayer layer = new ArcGISDynamicMapServiceLayer(
+         //       "http://servicesbeta.esri.com/ArcGIS/rest/services/SanJuan/TrailConditions/MapServer",
+           //     null,
+             //   creds);
+
+
+        // Retrieve the map and initial extent from XML layout
         mMapView = (MapView) findViewById(R.id.map);
-// Get the feature service URL from values->strings.xml
+        // Get the feature service URL from values->strings.xml
         mFeatureServiceURL = this.getResources().getString(R.string.featureServiceURL);
-// Add Feature layer to the MapView
-        mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
+        // Add Feature layer to the MapView
+        mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND,creds);
         mMapView.addLayer(mFeatureLayer);
-// Add Graphics layer to the MapView
+        // Add Graphics layer to the MapView
         mGraphicsLayer = new GraphicsLayer();
         mMapView.addLayer(mGraphicsLayer);
 
 
-        //MapView Stuff
-        // Retrieve the map and initial extent from XML layout
-        mMapView = (MapView) findViewById(R.id.map);
+
+
         // Enable map to wrap around date line.
         mMapView.enableWrapAround(true);
 
+        mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
+            public void onStatusChanged(Object source, STATUS status) {
+                if ((source == mMapView) && (status == OnStatusChangedListener.STATUS.INITIALIZED)) {
+                    mIsMapLoaded = true;
+                }
+            }
+        });
 
+        LocationDisplayManager locationDisplayManager = mMapView.getLocationDisplayManager();
+        //LocationDisplayManager.AutoPanMode panMode = new LocationDisplayManager.AutoPanMode.LOCATION;
+        locationDisplayManager.setAutoPanMode(LocationDisplayManager.AutoPanMode.LOCATION);
+       // mMapView.zoomToScale(locationDisplayManager.getPoint(), 13);
+        locationDisplayManager.start();
     }
 
     protected void onPause() {
@@ -102,6 +146,8 @@ public class MainActivity extends AppCompatActivity
 
     protected void onResume() {
         super.onResume();
+        LocationDisplayManager locationDisplayManager = mMapView.getLocationDisplayManager();
+        locationDisplayManager.start();
         mMapView.unpause();
     }
 
@@ -109,7 +155,7 @@ public class MainActivity extends AppCompatActivity
     public void onStop() {
         super.onStop();
         // Turn off tracking, but leave the service around for further instructions
-        GeotriggerService.setTrackingProfile(this, GeotriggerService.TRACKING_PROFILE_OFF);
+
     }
 
     @Override
@@ -131,7 +177,7 @@ public class MainActivity extends AppCompatActivity
         mTopoMenuItem = menu.getItem(1);
         mGrayMenuItem = menu.getItem(2);
         mOceansMenuItem = menu.getItem(3);
-
+        // Get the other switching menu items.
         // Also set the topo basemap menu item to be checked, as this is the default.
         mTopoMenuItem.setChecked(true);
 
@@ -139,7 +185,64 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private class QueryFeatureLayer extends AsyncTask<String, Void, FeatureResult> {
 
+        @Override
+        protected FeatureResult doInBackground(String... params) {
+
+            String whereClause = "COUNTRY='" + params[0] + "'";
+
+            // Define a new query and set parameters
+            QueryParameters mParams = new QueryParameters();
+            mParams.setWhere(whereClause);
+            mParams.setReturnGeometry(true);
+
+            // Define the new instance of QueryTask
+            QueryTask queryTask = new QueryTask(mFeatureServiceURL);
+            FeatureResult results;
+
+            try {
+                // run the querytask
+                results = queryTask.execute(mParams);
+                return results;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(FeatureResult results) {
+
+            // Remove the result from previously run query task
+            mGraphicsLayer.removeAll();
+
+            // Define a new marker symbol for the result graphics
+            SimpleMarkerSymbol sms = new SimpleMarkerSymbol(Color.BLUE, 10, SimpleMarkerSymbol.STYLE.CIRCLE);
+
+            // Envelope to focus on the map extent on the results
+            Envelope extent = new Envelope();
+
+            // iterate through results
+            if (results != null) {
+                for (Object element : results) {
+                    // if object is feature cast to feature
+                    if (element instanceof Feature) {
+                        Feature feature = (Feature) element;
+                        // convert feature to graphic
+                        Graphic graphic = new Graphic(feature.getGeometry(), sms, feature.getAttributes());
+                        // merge extent with point
+                        extent.merge((Point) graphic.getGeometry());
+                        // add it to the layer
+                        mGraphicsLayer.addGraphic(graphic);
+                    }
+                }
+            }
+
+            // Set the map extent to the envelope containing the result graphics
+            mMapView.setExtent(extent, 100);
+        }
+    }
 
 
     @Override

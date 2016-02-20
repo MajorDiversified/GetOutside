@@ -9,10 +9,8 @@
 
     <string name="google_app_id">838187262843</string>
 
-    <string name="featureServiceURL">http://services.arcgis.com/oKgs2tbjK6zwTdvi/arcgis/rest/services/Major_World_Cities/FeatureServer/0</string>
-
-
-
+    <string name="featureServiceURL">http://services.arcgis.com/oKgs2tbjK6zwTdvi/arcgis/rest/services/Major_World_Cities/FeatureServer</string>
+    <string name="token">SQyga9ItRgLHBrGM8AEVnhPLY8MyUg1t7o3UF15NKvD-_faDM4mMZJoKWtlYs1WQCtVTC1nSGdhqEXXauHHM-Fi8r8T1VZxW_mOUaky5COU0_3PUJTtyJ2IRWVwGock4</string>
     <string name="gps_provider_disabled">GPS Location Services are unavailable!</string>
     <string name="network_provider_disabled">Network Location Services are unavailable!</string>
     <string name="both_gps_and_network_disabled">GPS and Network Location Services are both unavailable!</string>
@@ -29,5 +27,4 @@
     <string name="TopoMenu">Topographic</string>
     <string name="GrayMenu">Gray</string>
     <string name="OceanMenu">Oceans</string>
-
 </resources>

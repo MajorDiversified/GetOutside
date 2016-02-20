@@ -33,6 +33,6 @@ dependencies {
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.esri.android.geotrigger:geotrigger-sdk:1.2.0'
-    compile 'com.google.android.gms:play-services:6.5.87'
+    compile 'com.google.android.gms:play-services:8.4.0'
 
 }
