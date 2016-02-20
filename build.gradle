@@ -19,6 +19,9 @@ allprojects {
         maven {
             url 'http://esri.bintray.com/arcgis'
         }
+        maven {
+            url 'https://esri.bintray.com/android'
+        }
     }
 }
 
