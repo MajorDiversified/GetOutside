@@ -9,6 +9,10 @@
 
     <string name="google_app_id">838187262843</string>
 
+    <string name="featureServiceURL">http://services.arcgis.com/oKgs2tbjK6zwTdvi/arcgis/rest/services/Major_World_Cities/FeatureServer/0</string>
+
+
+
     <string name="gps_provider_disabled">GPS Location Services are unavailable!</string>
     <string name="network_provider_disabled">Network Location Services are unavailable!</string>
     <string name="both_gps_and_network_disabled">GPS and Network Location Services are both unavailable!</string>

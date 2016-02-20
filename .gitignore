@@ -43,3 +43,4 @@ Thumbs.db
 /.idea/libraries
 .idea/gradle.xml
 *.iml
+.idea

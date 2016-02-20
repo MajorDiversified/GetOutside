@@ -16,13 +16,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.esri.android.geotrigger.GeotriggerService;
+import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.MapOptions;
 import com.esri.android.map.MapView;
+import com.esri.android.map.ags.ArcGISFeatureLayer;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    MapView mMapView;
+    ArcGISFeatureLayer mFeatureLayer;
+    GraphicsLayer mGraphicsLayer;
+    boolean mIsMapLoaded;
+    String mFeatureServiceURL;
     // The MapView.
-    MapView mMapView = null;
+    //MapView mMapView = null;
     // The basemap switching menu items.
     MenuItem mStreetsMenuItem = null;
     MenuItem mTopoMenuItem = null;
@@ -66,6 +73,17 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
+// Retrieve the map and initial extent from XML layout
+        mMapView = (MapView) findViewById(R.id.map);
+// Get the feature service URL from values->strings.xml
+        mFeatureServiceURL = this.getResources().getString(R.string.featureServiceURL);
+// Add Feature layer to the MapView
+        mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND);
+        mMapView.addLayer(mFeatureLayer);
+// Add Graphics layer to the MapView
+        mGraphicsLayer = new GraphicsLayer();
+        mMapView.addLayer(mGraphicsLayer);
 
 
         //MapView Stuff
