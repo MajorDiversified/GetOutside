@@ -33,5 +33,6 @@
     <string name="switch2String">Get Out!</string>
     <string name="switch1String">Weather</string>
     <string name="title_activity_location_fail">LocationFailActivity</string>
+    <string name="title_activity_place_name">PlaceNameActivity</string>
 
 </resources>

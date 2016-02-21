@@ -1,5 +1,6 @@
 package com.majordiversifed.getoutside;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.Manifest;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.PopupMenu;
 import android.widget.Switch;
 import android.widget.ToggleButton;
 
@@ -33,7 +35,11 @@ import com.esri.android.map.ags.ArcGISDynamicMapServiceLayer;
 import com.esri.android.map.ags.ArcGISFeatureLayer;
 import com.esri.android.map.ags.ArcGISImageServiceLayer;
 import com.esri.android.map.ags.ArcGISLayerInfo;
+import com.esri.android.map.event.OnSingleTapListener;
 import com.esri.android.map.event.OnStatusChangedListener;
+import com.esri.android.map.popup.Popup;
+import com.esri.android.map.popup.PopupContainer;
+import com.esri.android.toolkit.map.MapViewHelper;
 import com.esri.core.geometry.Envelope;
 import com.esri.core.geometry.Point;
 import com.esri.core.io.UserCredentials;
@@ -41,10 +47,24 @@ import com.esri.core.map.Feature;
 import com.esri.core.map.FeatureResult;
 import com.esri.core.map.Graphic;
 import com.esri.core.map.Legend;
+import com.esri.core.map.popup.PopupFieldInfo;
 import com.esri.core.raster.RasterSource;
 import com.esri.core.symbol.SimpleMarkerSymbol;
 import com.esri.core.tasks.query.QueryTask;
 import com.esri.core.tasks.query.QueryParameters;
+
+
+import com.esri.android.map.event.OnLongPressListener;
+import com.esri.android.map.event.OnSingleTapListener;
+import com.esri.android.map.event.OnStatusChangedListener;
+import com.esri.android.map.popup.Popup;
+import com.esri.android.map.popup.PopupContainer;
+import com.esri.android.toolkit.map.MapViewHelper;
+import com.esri.android.toolkit.map.PopupCreateListener;
+//import com.esri.arcgis.android.samples.PopupUICustomization.PopupFragment.OnEditListener;
+import com.esri.core.map.CallbackListener;
+import com.esri.core.map.FeatureEditResult;
+import com.esri.core.map.Graphic;
 
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -81,6 +101,8 @@ public class MainActivity extends AppCompatActivity
 
     public static final int RESULT_GALLERY = 0;
 
+    private MapViewHelper mMapViewHelper;
+    private PopupFragment mPopupFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +124,6 @@ public class MainActivity extends AppCompatActivity
         mMapView = (MapView) findViewById(R.id.map);
         mFeatureServiceURL = this.getResources().getString(R.string.mapserviceURL);
         final ArcGISDynamicMapServiceLayer aGDMS = new ArcGISDynamicMapServiceLayer(mFeatureServiceURL);
-
 
 
         // Construct a feature service layer
@@ -141,16 +162,21 @@ public class MainActivity extends AppCompatActivity
         mMapView.addLayer(custom);
 
 
+
+
+
         ToggleButton toggle2 = (ToggleButton) findViewById(R.id.switch2);
         toggle2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     //mMapView.addLayer(custom);
                 } else {
-                   // mMapView.removeLayer(custom);
+                    // mMapView.removeLayer(custom);
                 }
             }
         });
+
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,7 +210,25 @@ public class MainActivity extends AppCompatActivity
             public void onStatusChanged(Object source, STATUS status) {
                 if ((source == mMapView) && (status == OnStatusChangedListener.STATUS.INITIALIZED)) {
                     mIsMapLoaded = true;
+                    mMapViewHelper = new MapViewHelper(mMapView);
                 }
+            }
+        });
+
+        //Popup popup = custom.createPopup(mMapView,1, (Feature) test);
+        //PopupContainer pc = new PopupContainer(mMapView);
+        //pc.addPopup(popup);
+
+
+        mMapView.setOnSingleTapListener(new OnSingleTapListener() {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onSingleTap(float v, float v1) {
+                mPopupFragment = null;
+                mMapViewHelper.createPopup(v, v1, new SimplePopupCreateListener());
+
             }
         });
 
@@ -198,6 +242,7 @@ public class MainActivity extends AppCompatActivity
         locationDisplayManager.start();
 
     }
+
 
     public void testfeatureLayer(ArcGISFeatureLayer featureLayer){
         int[] collectionGraphics = featureLayer.getGraphicIDs(42.2828f,-83.714699f,500);
@@ -362,7 +407,10 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+
+
     @SuppressWarnings("StatementWithEmptyBody")
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
@@ -392,4 +440,22 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-}
+
+    private class SimplePopupCreateListener implements PopupCreateListener {
+
+        @Override
+        public void onResult(final PopupContainer container) {
+            if ((container != null) && (container.getPopupCount() > 0)) {
+                ((Activity) MainActivity.this).runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (mPopupFragment == null ) {
+                            mPopupFragment = new PopupFragment(mMapView, container);
+                            mPopupFragment.show();
+                        }
+                    }
+                });
+            }
+        }
+}}

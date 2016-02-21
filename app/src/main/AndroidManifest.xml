@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+
     <uses-feature android:name="android.hardware.camera" />
 
     <permission
@@ -30,9 +31,7 @@
         <activity
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -47,7 +46,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".LocationFailActivity"
             android:label="@string/title_activity_location_fail"
@@ -56,6 +54,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.majordiversifed.getoutside.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".PlaceNameActivity"
+            android:label="@string/title_activity_place_name"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.majordiversifed.getoutside.MainActivity" />
         </activity>
     </application>
 
