@@ -1,6 +1,8 @@
 package com.majordiversifed.getoutside;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -42,18 +44,46 @@ public class SearchActivity extends AppCompatActivity {
                     limit = 16;
                 }
                 ArrayList<Location> locs;
+                android.location.Location loc = getLocation();
+                double currentLat = 5205000;
+                double currentLon = -9320000;
+                int searchType;
                 if (query.equals(QueryType.SEARCH_BY_DISTANCE)) {
-                    locs = Utility.getLocationsByDistance(currentLat, currentLon, distance, limit);
+                    searchType = 0;
+                    //locs = (ArrayList) Utility.getLocationsByDistance(currentLat, currentLon, distance, limit);
                 } else if (query.equals(QueryType.SEARCH_BY_RATING)) {
-                    locs = Utility.getLocationsByRating(currentLat, currentLon, distance, limit);
+                    searchType = 1;
+                    //locs = (ArrayList) Utility.getLocationsByRating(currentLat, currentLon, distance, limit);
                 } else {
-                    locs = Utility.getLocationsByPopularity(currentLat, currentLon, distance, limit);
+                    searchType = 2;
+                    //locs = (ArrayList) Utility.getLocationsByPopularity(currentLat, currentLon, distance, limit);
                 }
-                Intent intent = new Intent(this, SearchResultsActivity.class);
-                intent.putParcelableArrayListExtra("sortedList", locs);
+                Intent intent = new Intent(SearchActivity.this, SearchResultsActivity.class);
+                intent.putExtra("searchType", searchType);
+                intent.putExtra("currentLat", currentLat);
+                intent.putExtra("currentLon", currentLon);
+                intent.putExtra("distance", distance);
+                intent.putExtra("limit", limit);
+                //System.out.println(locs.size());
                 startActivity(intent);
 
             }
         });
+    }
+
+    public android.location.Location getLocation() {
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        checkPermission(LocationManager.GPS_PROVIDER, 1, 1);
+        if (locationManager != null) {
+            android.location.Location lastKnownLocationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastKnownLocationGPS != null) {
+                return lastKnownLocationGPS;
+            } else {
+                android.location.Location loc =  locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                return loc;
+            }
+        } else {
+            return null;
+        }
     }
 }

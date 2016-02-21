@@ -229,7 +229,17 @@ public class MainActivity extends AppCompatActivity
         {
             Graphic gr = test.getGraphics()[i];
             Point Lon = (Point) gr.getGeometry();
-            Utility.addLocation(UIDS[i],Lon.getY(),Lon.getX());
+            Location loc = new Location (UIDS[i],Lon.getY(),Lon.getX());
+            Utility.addLocation(loc);
+            Utility.rateLocation(loc.getId(), 5);
+            Utility.rateLocation(loc.getId(), 2);
+            if (loc.getId() % 3 == 0) {
+                Utility.rateLocation(loc.getId(), 1);
+            } else if (loc.getId() % 3 == 1) {
+                Utility.rateLocation(loc.getId(), 5);
+            } else {
+            Utility.rateLocation(loc.getId(), 2);
+            }
         }
 
     }

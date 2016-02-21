@@ -34,7 +34,7 @@ public class Location implements Parcelable {
      */
     public void addReview(Review r) {
         reviews.add(r);
-        this.rating = (r.getRating() + this.rating) / numRatings++;
+        this.rating = (r.getRating() + this.rating) / ++numRatings;
     }
 
     /**

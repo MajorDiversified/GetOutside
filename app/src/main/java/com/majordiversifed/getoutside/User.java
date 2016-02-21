@@ -72,7 +72,7 @@ public class User implements Parcelable {
      * @param rating rating of other user
      */
     public void calculateRating(double rating) {
-        this.rating = (rating + this.rating) / numRatings++;
+        this.rating = (rating + this.rating) / ++numRatings;
     }
 
     /**
