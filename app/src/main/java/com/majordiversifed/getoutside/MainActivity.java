@@ -215,11 +215,10 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        //Popup popup = custom.createPopup(mMapView,1, (Feature) test);
-        //PopupContainer pc = new PopupContainer(mMapView);
-        //pc.addPopup(popup);
-
-
+        Popup popup = custom.createPopup(mMapView,1, (Feature) test);
+        PopupContainer pc = new PopupContainer(mMapView);
+        pc.addPopup(popup);
+        
         mMapView.setOnSingleTapListener(new OnSingleTapListener() {
 
             private static final long serialVersionUID = 1L;
