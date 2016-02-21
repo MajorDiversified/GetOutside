@@ -192,11 +192,15 @@ public final class Utility {
         final double lat = currentLat;
         final double lon = currentLon;
         List<Location> locs = new ArrayList<>(locations);
+        List<Location> locsTemp = new ArrayList<>();
+        System.out.println(locs.size());
         for (Location loc : locs) {
-            if (Math.pow(currentLat - loc.getLat(), 2) + Math.pow(currentLon - loc.getLon(), 2) > distanceTotal) {
-                locs.remove(loc);
+            if (Math.pow(currentLat - loc.getLat(), 2) + Math.pow(currentLon - loc.getLon(), 2) <= Math.pow(distanceTotal, 2)) {
+                locsTemp.add(loc);
             }
         }
+        locs = locsTemp;
+        System.out.println(locs.size());
         Collections.sort(locs, new Comparator<Location>() {
             @Override
             public int compare(Location lhs, Location rhs) {
@@ -205,9 +209,7 @@ public final class Utility {
                 return Double.compare(a, b);
             }
         });
-        if (limitQueries < locations.size()) {
-            locs = locs.subList(0, limitQueries);
-        }
+        System.out.println("    A      " + locs.size());
         return locs;
     }
 
@@ -232,20 +234,19 @@ public final class Utility {
      */
     public static List<Location> getLocationsByRating(double currentLat, double currentLon, double distanceTotal, int limitQueries) {
         List<Location> locs = new ArrayList<Location>(locations);
+        List<Location> locsTemp = new ArrayList<>();
         for (Location loc : locs) {
-            if (Math.pow(currentLat - loc.getLat(), 2) + Math.pow(currentLon - loc.getLon(), 2) > distanceTotal) {
-                locs.remove(loc);
+            if (Math.pow(currentLat - loc.getLat(), 2) + Math.pow(currentLon - loc.getLon(), 2) <= Math.pow(distanceTotal, 2)) {
+                locsTemp.add(loc);
             }
         }
+        locs = locsTemp;
         Collections.sort(locs, new Comparator<Location>() {
             @Override
             public int compare(Location lhs, Location rhs) {
                 return Double.compare(lhs.getRating(), rhs.getRating());
             }
         });
-        if (limitQueries < locations.size()) {
-            locs = locs.subList(0, limitQueries);
-        }
         return locs;
     }
 
@@ -270,20 +271,19 @@ public final class Utility {
      */
     public static List<Location> getLocationsByPopularity(double currentLat, double currentLon, double distanceTotal, int limitQueries) {
         List<Location> locs = new ArrayList<Location>(locations);
+        List<Location> locsTemp = new ArrayList<>();
         for (Location loc : locs) {
-            if (Math.pow(currentLat - loc.getLat(), 2) + Math.pow(currentLon - loc.getLon(), 2) > distanceTotal) {
-                locs.remove(loc);
+            if (Math.pow(currentLat - loc.getLat(), 2) + Math.pow(currentLon - loc.getLon(), 2) <= Math.pow(distanceTotal, 2)) {
+                locsTemp.add(loc);
             }
         }
+        locs = locsTemp;
         Collections.sort(locs, new Comparator<Location>() {
             @Override
             public int compare(Location lhs, Location rhs) {
                 return Double.compare(lhs.getNumRatings(), rhs.getNumRatings());
             }
         });
-        if (limitQueries < locations.size()) {
-            locs = locs.subList(0, limitQueries);
-        }
         return locs;
     }
 
