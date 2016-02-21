@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity
 
         int[] uIDS;
         uIDS = custom.addGraphics(test.getGraphics());
-
+        createLocation(uIDS);
         mMapView.addLayer(custom);
 
 
@@ -250,6 +250,17 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
+    public void createLocation(int[] UIDS) {
+
+        for (int i = 0; i < test.getGraphics().length; i++)
+        {
+            Graphic gr = test.getGraphics()[i];
+            Point Lon = (Point) gr.getGeometry();
+            Utility.addLocation(UIDS[i],Lon.getY(),Lon.getX());
+        }
+
+    }
 
     public void newLoc(View view) {
         LocationDisplayManager locationDisplayManager = mMapView.getLocationDisplayManager();
