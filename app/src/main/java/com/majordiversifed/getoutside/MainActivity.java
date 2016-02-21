@@ -1,17 +1,12 @@
 package com.majordiversifed.getoutside;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -20,55 +15,32 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.PopupMenu;
 import android.widget.Switch;
 import android.widget.ToggleButton;
-
 
 import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.LocationDisplayManager;
 import com.esri.android.map.MapOptions;
 import com.esri.android.map.MapView;
-import com.esri.android.map.RasterLayer;
 import com.esri.android.map.ags.ArcGISDynamicMapServiceLayer;
 import com.esri.android.map.ags.ArcGISFeatureLayer;
-import com.esri.android.map.ags.ArcGISImageServiceLayer;
-import com.esri.android.map.ags.ArcGISLayerInfo;
 import com.esri.android.map.event.OnSingleTapListener;
 import com.esri.android.map.event.OnStatusChangedListener;
-import com.esri.android.map.popup.Popup;
-import com.esri.android.map.popup.PopupContainer;
-import com.esri.android.toolkit.map.MapViewHelper;
-import com.esri.core.geometry.Envelope;
-import com.esri.core.geometry.Point;
-import com.esri.core.io.UserCredentials;
-import com.esri.core.map.Feature;
-import com.esri.core.map.FeatureResult;
-import com.esri.core.map.Graphic;
-import com.esri.core.map.Legend;
-import com.esri.core.map.popup.PopupFieldInfo;
-import com.esri.core.raster.RasterSource;
-import com.esri.core.symbol.SimpleMarkerSymbol;
-import com.esri.core.tasks.query.QueryTask;
-import com.esri.core.tasks.query.QueryParameters;
-
-
-import com.esri.android.map.event.OnLongPressListener;
-import com.esri.android.map.event.OnSingleTapListener;
-import com.esri.android.map.event.OnStatusChangedListener;
-import com.esri.android.map.popup.Popup;
 import com.esri.android.map.popup.PopupContainer;
 import com.esri.android.toolkit.map.MapViewHelper;
 import com.esri.android.toolkit.map.PopupCreateListener;
-//import com.esri.arcgis.android.samples.PopupUICustomization.PopupFragment.OnEditListener;
-import com.esri.core.map.CallbackListener;
-import com.esri.core.map.FeatureEditResult;
+import com.esri.core.geometry.Envelope;
+import com.esri.core.geometry.Point;
+import com.esri.core.map.Feature;
+import com.esri.core.map.FeatureResult;
 import com.esri.core.map.Graphic;
+import com.esri.core.symbol.SimpleMarkerSymbol;
+import com.esri.core.tasks.query.QueryParameters;
+import com.esri.core.tasks.query.QueryTask;
 
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.util.List;
+//import com.esri.arcgis.android.samples.PopupUICustomization.PopupFragment.OnEditListener;
 
 
 public class MainActivity extends AppCompatActivity
@@ -427,6 +399,9 @@ public class MainActivity extends AppCompatActivity
             locationDisplayManager.setAutoPanMode(LocationDisplayManager.AutoPanMode.LOCATION);
             locationDisplayManager.start();
             mMapView.zoomToScale(locationDisplayManager.getPoint(), 24000);
+        } else if (id == R.id.nav_search) {
+            Intent intent = new Intent(this, SearchActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {

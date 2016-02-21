@@ -3,8 +3,8 @@ package com.majordiversifed.getoutside;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a graphic marker on the map. Represented by a unique id, latitude, and longitude.
@@ -19,13 +19,13 @@ public class Location implements Parcelable {
     private double lon;
     private double rating;
     private int numRatings;
-    private Set<Review> reviews;
+    private List<Review> reviews;
 
     public Location(int id, double lat, double lon) {
         this.lat = lat;
         this.lon = lon;
         this.id = id;
-        reviews = new HashSet<>(50);
+        reviews = new ArrayList<>(50);
     }
 
     /**
@@ -87,6 +87,7 @@ public class Location implements Parcelable {
         lon = in.readDouble();
         rating = in.readDouble();
         numRatings = in.readInt();
+        reviews = in.readArrayList(Review.class.getClassLoader());
     }
 
     /**
@@ -101,6 +102,7 @@ public class Location implements Parcelable {
         dest.writeDouble(lon);
         dest.writeDouble(rating);
         dest.writeInt(numRatings);
+        dest.writeList(reviews);
     }
 
     /**
