@@ -82,6 +82,9 @@ public class HardCodeGraphic {
         this.graphics[this.graphics.length - 1] = new Graphic(p, simpleMarker);
     }
 
+
+
+
     public void removeGraphic (int i) {
 
     }
