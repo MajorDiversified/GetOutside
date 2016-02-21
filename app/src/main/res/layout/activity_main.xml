@@ -35,23 +35,8 @@
                 android:id="@+id/switch1"
                 android:checked="false"
                 android:layout_gravity="center_horizontal"
-                android:showText="true" />
+                android:showText="false" />
 
-            <ToggleButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/switch2String"
-                android:id="@+id/switch2"
-                android:allowUndo="true" />
-
-            <Button
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/buttonString"
-                android:id="@+id/button"
-                android:layout_gravity="right"
-                android:onClick="newLoc"/>
         </LinearLayout>
 
 

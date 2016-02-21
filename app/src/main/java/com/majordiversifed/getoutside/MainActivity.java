@@ -1,8 +1,10 @@
 package com.majordiversifed.getoutside;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -21,6 +23,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Switch;
 import android.widget.ToggleButton;
@@ -161,23 +164,6 @@ public class MainActivity extends AppCompatActivity
         createLocation(uIDS);
         mMapView.addLayer(custom);
 
-
-
-
-
-        ToggleButton toggle2 = (ToggleButton) findViewById(R.id.switch2);
-        toggle2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    //mMapView.addLayer(custom);
-                } else {
-                    // mMapView.removeLayer(custom);
-                }
-            }
-        });
-
-
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -206,30 +192,40 @@ public class MainActivity extends AppCompatActivity
         */
 
         mMapView.enableWrapAround(true);
-        mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
-            public void onStatusChanged(Object source, STATUS status) {
-                if ((source == mMapView) && (status == OnStatusChangedListener.STATUS.INITIALIZED)) {
-                    mIsMapLoaded = true;
-                    mMapViewHelper = new MapViewHelper(mMapView);
-                }
-            }
-        });
+       // mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
+         //   public void onStatusChanged(Object source, STATUS status) {
+           //     if ((source == mMapView) && (status == OnStatusChangedListener.STATUS.INITIALIZED)) {
+             //       mIsMapLoaded = true;
+               //     mMapViewHelper = new MapViewHelper(mMapView);
+              //  }
+         //   }
+       // });
 
-        //Popup popup = custom.createPopup(mMapView,1, (Feature) test);
+        PopupContainer popupContainer = new PopupContainer(mMapView);
+
+        Popup[] pops = new Popup[16];
+        for (int i = 0; i < test.getGraphics().length; i ++) {
+             pops[i] = custom.createPopup(mMapView, 2, test.getGraphics()[i]);
+            popupContainer.addPopup(pops[i]);
+        }
+
+        PopupDialog popupDialog = new PopupDialog(mMapView.getContext(), popupContainer);
+
         //PopupContainer pc = new PopupContainer(mMapView);
         //pc.addPopup(popup);
 
-        mMapView.setOnSingleTapListener(new OnSingleTapListener() {
+      //  mMapView.setOnSingleTapListener(new OnSingleTapListener() {
 
-            private static final long serialVersionUID = 1L;
+        //    private static final long serialVersionUID = 1L;
 
-            @Override
-            public void onSingleTap(float v, float v1) {
-                mPopupFragment = null;
-                mMapViewHelper.createPopup(v, v1, new SimplePopupCreateListener());
+//            @Override
+  //          public void onSingleTap(float v, float v1) {
 
-            }
-        });
+                //mPopupFragment = null;
+                //mMapViewHelper.createPopup(v, v1, new SimplePopupCreateListener());
+
+        //    }
+    //    });
 
         /**
          * current location manager
@@ -468,4 +464,8 @@ public class MainActivity extends AppCompatActivity
                 });
             }
         }
+
+
+
+
 }}
