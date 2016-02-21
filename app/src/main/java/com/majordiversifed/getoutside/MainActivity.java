@@ -18,14 +18,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.ToggleButton;
 
 
 import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.LocationDisplayManager;
 import com.esri.android.map.MapOptions;
 import com.esri.android.map.MapView;
+import com.esri.android.map.RasterLayer;
 import com.esri.android.map.ags.ArcGISDynamicMapServiceLayer;
 import com.esri.android.map.ags.ArcGISFeatureLayer;
+import com.esri.android.map.ags.ArcGISImageServiceLayer;
+import com.esri.android.map.ags.ArcGISLayerInfo;
 import com.esri.android.map.event.OnStatusChangedListener;
 import com.esri.core.geometry.Envelope;
 import com.esri.core.geometry.Point;
@@ -33,25 +39,34 @@ import com.esri.core.io.UserCredentials;
 import com.esri.core.map.Feature;
 import com.esri.core.map.FeatureResult;
 import com.esri.core.map.Graphic;
+import com.esri.core.map.Legend;
+import com.esri.core.raster.RasterSource;
 import com.esri.core.symbol.SimpleMarkerSymbol;
 import com.esri.core.tasks.query.QueryTask;
 import com.esri.core.tasks.query.QueryParameters;
 
+import java.io.InputStream;
+import java.security.KeyStore;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+
     MapView mMapView;
     ArcGISFeatureLayer mFeatureLayer;
     GraphicsLayer mGraphicsLayer;
     boolean mIsMapLoaded;
     String mFeatureServiceURL;
-    // The MapView.
-    //MapView mMapView = null;
+
     // The basemap switching menu items.
     MenuItem mStreetsMenuItem = null;
     MenuItem mTopoMenuItem = null;
     MenuItem mGrayMenuItem = null;
     MenuItem mOceansMenuItem = null;
+
+    MenuItem mWeatherMenuItem = null;
 
 
     // Create MapOptions for each type of basemap.
@@ -61,19 +76,70 @@ public class MainActivity extends AppCompatActivity
     final MapOptions mOceansBasemap = new MapOptions(MapOptions.MapType.OCEANS);
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
-
-
+        /**
+         *  on create method that grabs the toolbar and creation of the floating action button
+        */
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        /**
+         * Retrive the map and initial extent from XML layout also grabing weather url
+         */
+
+        mMapView = (MapView) findViewById(R.id.map);
+        mFeatureServiceURL = this.getResources().getString(R.string.mapserviceURL);
+        final ArcGISDynamicMapServiceLayer aGDMS = new ArcGISDynamicMapServiceLayer(mFeatureServiceURL);
+
+
+
+        // Construct a feature service layer
+        ArcGISFeatureLayer featureLayer = new ArcGISFeatureLayer(this.getResources().getString(
+                R.string.featureServiceURL), ArcGISFeatureLayer.MODE.SNAPSHOT);
+
+        // Add feature layer to MapView
+        mMapView.addLayer(featureLayer);
+
+
+        /**
+         * toggle button that sets when the weather is available or not
+         */
+
+        Switch toggle1 = (Switch) findViewById(R.id.switch1);
+        toggle1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mMapView.addLayer(aGDMS);
+                } else {
+                    mMapView.removeLayer(aGDMS);
+                }
+            }
+        });
+
+        /**
+         * toggle button 2 for setting when you see possible locations to travel to nearby
+         *
+         * Graphic layer creation and adding it to the mapview
+         */
+
+        final GraphicsLayer custom = new GraphicsLayer();
+
+        ToggleButton toggle2 = (ToggleButton) findViewById(R.id.switch2);
+        toggle2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mMapView.addLayer(custom);
+                } else {
+                    mMapView.removeLayer(custom);
+                }
+            }
+        });
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,48 +148,27 @@ public class MainActivity extends AppCompatActivity
                 locationDisplayManager.setAutoPanMode(LocationDisplayManager.AutoPanMode.LOCATION);
                 locationDisplayManager.start();
                 mMapView.zoomToScale(locationDisplayManager.getPoint(), 24000);
+
             }
         });
+
+        /**
+         * DrawerLayout creation as well as syncing with the nav view
+         */
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-
-
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        /**
+        * Enable map to wrap around date line and some status change duda
+        */
 
-        UserCredentials creds = new UserCredentials();
-        creds.setUserAccount("get_Outside", "mhacks2016");
-        // The following line can be omitted if the default token service is used.
-        creds.setTokenServiceUrl("http://hostname/ArcGIS/tokens");
-       // ArcGISDynamicMapServiceLayer layer = new ArcGISDynamicMapServiceLayer(
-         //       "http://servicesbeta.esri.com/ArcGIS/rest/services/SanJuan/TrailConditions/MapServer",
-           //     null,
-             //   creds);
-
-
-        // Retrieve the map and initial extent from XML layout
-        mMapView = (MapView) findViewById(R.id.map);
-        // Get the feature service URL from values->strings.xml
-        mFeatureServiceURL = this.getResources().getString(R.string.featureServiceURL);
-        // Add Feature layer to the MapView
-        mFeatureLayer = new ArcGISFeatureLayer(mFeatureServiceURL, ArcGISFeatureLayer.MODE.ONDEMAND,creds);
-        mMapView.addLayer(mFeatureLayer);
-        // Add Graphics layer to the MapView
-        mGraphicsLayer = new GraphicsLayer();
-        mMapView.addLayer(mGraphicsLayer);
-
-
-
-
-        // Enable map to wrap around date line.
         mMapView.enableWrapAround(true);
-
         mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
             public void onStatusChanged(Object source, STATUS status) {
                 if ((source == mMapView) && (status == OnStatusChangedListener.STATUS.INITIALIZED)) {
@@ -132,11 +177,21 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        /**
+         * current location manager
+         */
         LocationDisplayManager locationDisplayManager = mMapView.getLocationDisplayManager();
         //LocationDisplayManager.AutoPanMode panMode = new LocationDisplayManager.AutoPanMode.LOCATION;
         locationDisplayManager.setAutoPanMode(LocationDisplayManager.AutoPanMode.LOCATION);
        // mMapView.zoomToScale(locationDisplayManager.getPoint(), 13);
         locationDisplayManager.start();
+    }
+
+    public void testfeatureLayer(ArcGISFeatureLayer featureLayer){
+        int[] collectionGraphics = featureLayer.getGraphicIDs(42.2828f,-83.714699f,500);
+        for (int a: collectionGraphics) {
+            System.out.println(a);
+        }
     }
 
     protected void onPause() {
@@ -177,6 +232,10 @@ public class MainActivity extends AppCompatActivity
         mTopoMenuItem = menu.getItem(1);
         mGrayMenuItem = menu.getItem(2);
         mOceansMenuItem = menu.getItem(3);
+        mWeatherMenuItem = menu.getItem(4);
+
+
+
         // Get the other switching menu items.
         // Also set the topo basemap menu item to be checked, as this is the default.
         mTopoMenuItem.setChecked(true);
@@ -245,49 +304,53 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        boolean weather = false;
             //noinspection SimplifiableIfStatement
             if (id == R.id.action_settings) {
                 return true;
-        }
-        // Handle menu item selection.
-        switch (item.getItemId()) {
-            case R.id.World_Street_Map:
-                mMapView.setMapOptions(mStreetsBasemap);
-                mStreetsMenuItem.setChecked(true);
-                return true;
-            case R.id.World_Topo:
-                mMapView.setMapOptions(mTopoBasemap);
-                mTopoMenuItem.setChecked(true);
-                return true;
-            case R.id.Gray:
-                mMapView.setMapOptions(mGrayBasemap);
-                mGrayMenuItem.setChecked(true);
-                return true;
-            case R.id.Ocean_Basemap:
-                mMapView.setMapOptions(mOceansBasemap);
-                mOceansMenuItem.setChecked(true);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+            }
+
+            // Handle menu item selection.
+            switch (item.getItemId()) {
+                case R.id.World_Street_Map:
+                    mMapView.setMapOptions(mStreetsBasemap);
+                    mStreetsMenuItem.setChecked(true);
+                    return true;
+                case R.id.World_Topo:
+                    mMapView.setMapOptions(mTopoBasemap);
+                    mTopoMenuItem.setChecked(true);
+                    return true;
+                case R.id.Gray:
+                    mMapView.setMapOptions(mGrayBasemap);
+                    mGrayMenuItem.setChecked(true);
+                    return true;
+                case R.id.Ocean_Basemap:
+                    mMapView.setMapOptions(mOceansBasemap);
+                    mOceansMenuItem.setChecked(true);
+                    return true;
+                    default:
+                        return super.onOptionsItemSelected(item);
+                }
+
 
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {

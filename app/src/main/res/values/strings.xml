@@ -9,7 +9,8 @@
 
     <string name="google_app_id">838187262843</string>
 
-    <string name="featureServiceURL">http://services.arcgis.com/oKgs2tbjK6zwTdvi/arcgis/rest/services/Major_World_Cities/FeatureServer</string>
+    <string name="featureServiceURL">https://services.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer</string>
+    <string name="mapserviceURL">http://nowcoast.noaa.gov/arcgis/rest/services/nowcoast/analysis_meteohydro_sfc_qpe_time/MapServer</string>
     <string name="token">SQyga9ItRgLHBrGM8AEVnhPLY8MyUg1t7o3UF15NKvD-_faDM4mMZJoKWtlYs1WQCtVTC1nSGdhqEXXauHHM-Fi8r8T1VZxW_mOUaky5COU0_3PUJTtyJ2IRWVwGock4</string>
     <string name="gps_provider_disabled">GPS Location Services are unavailable!</string>
     <string name="network_provider_disabled">Network Location Services are unavailable!</string>
@@ -19,7 +20,7 @@
     <string name="settings">Settings</string>
     <string name="cancel">Cancel</string>
     <string name="play_services_dialog_cancel_toast">The Geotrigger SDK can\'t run without Google Play Services.</string>
-    <string name="hello_world">This sample application creates a 100m radius trigger around the current device location. The trigger will fire when you travel 100m from your current location.\n\nIf you do not receive a push notification, please ensure that push notifications have been set up correctly on the ArcGIS for Developers site and in the Google Cloud Console.</string>
+    <string name="hello_world"> </string>
     <string name="action_stop">Stop Tracking</string>
 
     <!-- basemap menu items -->
@@ -27,4 +28,6 @@
     <string name="TopoMenu">Topographic</string>
     <string name="GrayMenu">Gray</string>
     <string name="OceanMenu">Oceans</string>
+    <string name="weathermap">Weather</string>
+
 </resources>

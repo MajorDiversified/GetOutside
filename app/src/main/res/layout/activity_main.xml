@@ -9,12 +9,42 @@
     tools:openDrawer="start">
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <com.esri.android.map.MapView
-        android:id="@+id/map"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        mapoptions.MapType="Topo" />
+
+        <com.esri.android.map.MapView
+            android:id="@+id/map"
+            android:layout_width="fill_parent"
+            android:layout_height="483dp"
+            mapoptions.MapType="Topo" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Weather"
+                android:id="@+id/switch1"
+                android:checked="false"
+                android:layout_gravity="center_horizontal"
+                android:showText="true" />
+
+            <ToggleButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Get Out!"
+                android:id="@+id/switch2"
+                android:allowUndo="true" />
+        </LinearLayout>
+
+
+    </LinearLayout>
 
     <include
         layout="@layout/app_bar_main"
