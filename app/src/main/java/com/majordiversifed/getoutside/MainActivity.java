@@ -75,6 +75,8 @@ public class MainActivity extends AppCompatActivity
     final MapOptions mGrayBasemap = new MapOptions(MapOptions.MapType.GRAY);
     final MapOptions mOceansBasemap = new MapOptions(MapOptions.MapType.OCEANS);
 
+    GraphicsLayer custom = new GraphicsLayer();
+    HardCodeGraphic test = new HardCodeGraphic();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,15 +130,21 @@ public class MainActivity extends AppCompatActivity
          * Graphic layer creation and adding it to the mapview
          */
 
-        final GraphicsLayer custom = new GraphicsLayer();
+
+
+        int[] uIDS;
+        uIDS = custom.addGraphics(test.getGraphics());
+
+        mMapView.addLayer(custom);
+
 
         ToggleButton toggle2 = (ToggleButton) findViewById(R.id.switch2);
         toggle2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    mMapView.addLayer(custom);
+                    //mMapView.addLayer(custom);
                 } else {
-                    mMapView.removeLayer(custom);
+                   // mMapView.removeLayer(custom);
                 }
             }
         });
@@ -147,7 +155,7 @@ public class MainActivity extends AppCompatActivity
                 LocationDisplayManager locationDisplayManager = mMapView.getLocationDisplayManager();
                 locationDisplayManager.setAutoPanMode(LocationDisplayManager.AutoPanMode.LOCATION);
                 locationDisplayManager.start();
-                mMapView.zoomToScale(locationDisplayManager.getPoint(), 24000);
+                mMapView.zoomToScale(locationDisplayManager.getPoint(), 100000);
 
             }
         });
@@ -185,6 +193,7 @@ public class MainActivity extends AppCompatActivity
         locationDisplayManager.setAutoPanMode(LocationDisplayManager.AutoPanMode.LOCATION);
        // mMapView.zoomToScale(locationDisplayManager.getPoint(), 13);
         locationDisplayManager.start();
+
     }
 
     public void testfeatureLayer(ArcGISFeatureLayer featureLayer){
@@ -193,6 +202,14 @@ public class MainActivity extends AppCompatActivity
             System.out.println(a);
         }
     }
+
+
+    public void newLoc(View view) {
+        LocationDisplayManager locationDisplayManager = mMapView.getLocationDisplayManager();
+        test.addGraphic(locationDisplayManager.getPoint());
+        custom.addGraphic(test.getGraphics()[17]);
+    }
+
 
     protected void onPause() {
         super.onPause();

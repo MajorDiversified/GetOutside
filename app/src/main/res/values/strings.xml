@@ -29,5 +29,8 @@
     <string name="GrayMenu">Gray</string>
     <string name="OceanMenu">Oceans</string>
     <string name="weathermap">Weather</string>
+    <string name="buttonString">Mark It!</string>
+    <string name="switch2String">Get Out!</string>
+    <string name="switch1String">Weather</string>
 
 </resources>

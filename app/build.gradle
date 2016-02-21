@@ -35,4 +35,5 @@ dependencies {
     compile 'com.esri.android.geotrigger:geotrigger-sdk:1.2.0'
     compile 'com.google.android.gms:play-services:8.4.0'
 
+
 }
