@@ -85,7 +85,7 @@ public final class Utility {
 
     /**
      * Rates a location without the review.
-     * @param locId locatio id to be added
+     * @param locId location id to be added
      * @param rating rating to be added
      * @return true if the review was added, false if it already exists
      * @throws NoSuchElementException if location is not found
