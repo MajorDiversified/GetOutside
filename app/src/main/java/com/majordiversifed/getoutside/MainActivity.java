@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -78,6 +79,9 @@ public class MainActivity extends AppCompatActivity
     GraphicsLayer custom = new GraphicsLayer();
     HardCodeGraphic test = new HardCodeGraphic();
 
+    public static final int RESULT_GALLERY = 0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -129,7 +133,6 @@ public class MainActivity extends AppCompatActivity
          *
          * Graphic layer creation and adding it to the mapview
          */
-
 
 
         int[] uIDS;
@@ -367,11 +370,16 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-
+            Intent intentC = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivity(intentC);
         } else if (id == R.id.nav_gallery) {
-
+            Intent galleryIntent = new Intent( Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(galleryIntent , RESULT_GALLERY );
         } else if (id == R.id.nav_slideshow) {
-
+            LocationDisplayManager locationDisplayManager = mMapView.getLocationDisplayManager();
+            locationDisplayManager.setAutoPanMode(LocationDisplayManager.AutoPanMode.LOCATION);
+            locationDisplayManager.start();
+            mMapView.zoomToScale(locationDisplayManager.getPoint(), 24000);
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {

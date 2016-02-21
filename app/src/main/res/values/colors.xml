@@ -4,4 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="sms">#7E57C2</color>
+    <color name="gray">#F1F1F1</color>
+
 </resources>

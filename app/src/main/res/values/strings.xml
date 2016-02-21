@@ -32,5 +32,6 @@
     <string name="buttonString">Mark It!</string>
     <string name="switch2String">Get Out!</string>
     <string name="switch1String">Weather</string>
+    <string name="title_activity_location_fail">LocationFailActivity</string>
 
 </resources>

@@ -22,7 +22,6 @@ public class HardCodeGraphic {
 
     public Graphic[] makeGraphics() {
 
-
         double[] lat =
                 {
                         5205146.8,

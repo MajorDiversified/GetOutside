@@ -1,6 +1,9 @@
 package com.majordiversifed.getoutside;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -24,8 +27,18 @@ public class HomeActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, MainActivity.class);
-                startActivity(intent);
+
+                LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+                Location lastKnownLocation = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                    Intent intent = new Intent(HomeActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(HomeActivity.this, LocationFailActivity.class);
+                    startActivity(intent);
+                }
             }
         });
     }
